@@ -1,5 +1,10 @@
+plugins {
+    id "com.jfrog.bintray" version "1.7.3"
+}
+
 apply plugin: 'java'
 apply plugin: 'maven'
+apply plugin: 'maven-publish'
 
 repositories {
     jcenter()
@@ -7,8 +12,82 @@ repositories {
 
 ext {
     bytemanVersion = '3.0.6'
+    scmUrl = 'https://github.com/mahnkong/sslkeylogger-byteman-helper'
+    projectDescription = 'This project contains a Byteman helper class and a rule providing functionality to log SSL connection keys in a format used by wireshark to decrypt SSL Traffic.'
 }
 
 dependencies {
     compile "org.jboss.byteman:byteman:${bytemanVersion}"
 }
+
+jar {
+    from "LICENSE"
+}
+
+task sourcesJar(type: Jar, dependsOn: classes) {
+    classifier = 'sources'
+    from sourceSets.main.allSource
+}
+
+task javadocJar(type: Jar, dependsOn: javadoc) {
+    classifier = 'javadoc'
+    from javadoc.destinationDir
+}
+
+publishing {
+    publications {
+        artifacts(MavenPublication) {
+            from components.java
+
+            artifact sourcesJar
+            artifact javadocJar
+
+            pom.withXml {
+                asNode().appendNode('name', project.name)
+                asNode().appendNode('description', project.ext.projectDescription)
+                asNode().appendNode('url', project.ext.scmUrl)
+                asNode().appendNode('scm').
+                        appendNode('url', project.ext.scmUrl).parent().
+                        appendNode('connection', "scm:git:${project.ext.scmUrl}.git")
+                asNode().appendNode('licenses').appendNode('license').
+                        appendNode('name', 'Apache License, Version 2.0').parent().
+                        appendNode('url', 'http://www.apache.org/licenses/LICENSE-2.0.html')
+                asNode().appendNode('developers').appendNode('developer').
+                        appendNode('id', 'mahnkong')
+            }
+        }
+    }
+    repositories {
+        mavenLocal()
+    }
+}
+
+// https://github.com/bintray/gradle-bintray-plugin
+bintray {
+    user = System.getenv('BINTRAY_USER')
+    key = System.getenv('BINTRAY_KEY')
+
+    publications = ['artifacts']
+    pkg {
+        repo = "maven"
+        // it is the name that appears in bintray when logged
+        name = project.name
+        websiteUrl = project.ext.scmUrl
+        vcsUrl = project.ext.scmUrl
+        licenses = ["Apache-2.0"]
+        publish = true
+        version {
+            gpg {
+                sign = true //Determines whether to GPG sign the files. The default is false
+                passphrase = System.getenv("BINTRAY_GPG_PASSWORD") //Optional. The passphrase for GPG signing'
+            }
+            mavenCentralSync {
+                sync = true //Optional (true by default). Determines whether to sync the version to Maven Central.
+                user = System.getenv("BINTRAY_USER") //OSS user token
+                password = System.getenv("BINTRAY_OSS_PASSWORD") //OSS user password
+            }
+        }
+    } 
+}
+
+bintrayUpload.dependsOn('build')
