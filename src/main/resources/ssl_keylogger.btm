@@ -1,7 +1,7 @@
 RULE get_ssl_session_key
 CLASS ^sun.security.ssl.Handshaker
 METHOD calculateConnectionKeys(javax.crypto.SecretKey)
-HELPER org.mahnkong.byteman.helper.SSLKeyLoggerHelper
+HELPER com.github.mahnkong.byteman.helper.SSLKeyLoggerHelper
 AT EXIT
 IF TRUE
 DO logSSLSessionData($0.clnt_random.random_bytes, $1.getEncoded())
