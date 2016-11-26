@@ -1,4 +1,4 @@
-package org.mahnkong;
+package org.mahnkong.byteman.helper;
 
 import org.jboss.byteman.rule.Rule;
 import org.jboss.byteman.rule.helper.Helper;
