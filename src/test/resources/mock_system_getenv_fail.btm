@@ -1,0 +1,7 @@
+RULE mock_system_getenv
+CLASS java.lang.System
+METHOD String getenv(String)
+AT ENTRY
+IF $1.equals("SSL_KEYLOG_PATH")
+DO return "/path/does/not/exist/sslkeys_test.log"
+ENDRULE

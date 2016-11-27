@@ -11,13 +11,32 @@ repositories {
 }
 
 ext {
+    bytemanJunitRulesVersion = '1.0.1'
     bytemanVersion = '3.0.6'
     scmUrl = 'https://github.com/mahnkong/sslkeylogger-byteman-helper'
     projectDescription = 'This project contains a Byteman helper class and a rule providing functionality to log SSL connection keys in a format used by wireshark to decrypt SSL Traffic.'
 }
 
+configurations {
+    byteman
+}
+
 dependencies {
     compile "org.jboss.byteman:byteman:${bytemanVersion}"
+    testCompile "com.github.mahnkong:byteman-junit-rules:${bytemanJunitRulesVersion}"
+    byteman "org.jboss.byteman:byteman-download:${bytemanVersion}:bin@zip"
+    testCompile 'junit:junit:4.12'
+}
+
+task prepareByteman(type: Copy) {
+    from zipTree (configurations.byteman.files.first())
+    into buildDir
+}
+
+test {
+    dependsOn("prepareByteman")
+    environment 'BYTEMAN_HOME', "${buildDir}${File.separator}byteman-download-${bytemanVersion}"
+    forkEvery 1
 }
 
 jar {
@@ -90,4 +109,4 @@ bintray {
     } 
 }
 
-bintrayUpload.dependsOn('build')
+bintrayUpload.dependsOn('test')
