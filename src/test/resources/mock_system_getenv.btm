@@ -1,0 +1,9 @@
+RULE mock_system_getenv
+CLASS java.lang.System
+METHOD String getenv(String)
+AT ENTRY
+BIND
+    tempdir:String = System.getProperty("java.io.tmpdir")
+IF $1.equals("SSL_KEYLOG_PATH")
+DO return tempdir + "/sslkeys_test.log"
+ENDRULE
