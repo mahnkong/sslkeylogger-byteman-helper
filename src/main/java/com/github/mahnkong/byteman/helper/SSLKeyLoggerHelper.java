@@ -32,9 +32,4 @@ public class SSLKeyLoggerHelper extends Helper {
             Files.write(Paths.get(logfilePath), Arrays.asList(String.format("# %s", new Date().toString()), logline), UTF_8, APPEND, CREATE);
         }
     }
-
-    @Override
-    public String toString() {
-        return "";
-    }
 }

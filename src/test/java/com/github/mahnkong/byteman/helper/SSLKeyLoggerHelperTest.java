@@ -39,7 +39,7 @@ public class SSLKeyLoggerHelperTest {
     public ExpectedException thrown = ExpectedException.none();
 
     @ClassRule
-    public static BytemanAgentInstaller bytemanAgentInstaller = new BytemanAgentInstaller.Builder().installIntoBootstrapClasspath(true).transformAll(true).build();
+    public static BytemanAgentInstaller bytemanAgentInstaller = new BytemanAgentInstaller.Builder().verbose(true).debug(true).installIntoBootstrapClasspath(true).transformAll(true).build();
 
     @Rule
     public BytemanRuleSubmitter bytemanRuleSubmitter = new BytemanRuleSubmitter.Builder().build();
@@ -94,7 +94,7 @@ public class SSLKeyLoggerHelperTest {
         while (in.readLine() != null) {
         }
         in.close();
-        assertTrue(outContent.toString().trim().startsWith("CLIENT_RANDOM "));
+        assertTrue(outContent.toString().trim().contains("CLIENT_RANDOM "));
     }
 
     private static void disableSslVerification() {
