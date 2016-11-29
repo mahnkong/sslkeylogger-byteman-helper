@@ -8,11 +8,12 @@ apply plugin: 'maven'
 apply plugin: 'maven-publish'
 
 repositories {
+    mavenLocal()
     jcenter()
 }
 
 ext {
-    bytemanJunitRulesVersion = '1.0.2'
+    bytemanJunitRulesVersion = '1.0.3'
     bytemanVersion = '3.0.6'
     mockitoVersion = '1.9.5'
     scmUrl = 'https://github.com/mahnkong/sslkeylogger-byteman-helper'
