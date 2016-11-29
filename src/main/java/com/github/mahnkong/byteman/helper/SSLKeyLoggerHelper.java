@@ -18,6 +18,7 @@ import static javax.xml.bind.DatatypeConverter.printHexBinary;
  * Created by mahnkong on 26.11.2016.
  */
 public class SSLKeyLoggerHelper extends Helper {
+
     protected SSLKeyLoggerHelper(Rule rule) {
         super(rule);
     }
@@ -30,5 +31,10 @@ public class SSLKeyLoggerHelper extends Helper {
         } else {
             Files.write(Paths.get(logfilePath), Arrays.asList(String.format("# %s", new Date().toString()), logline), UTF_8, APPEND, CREATE);
         }
+    }
+
+    @Override
+    public String toString() {
+        return "";
     }
 }

@@ -1,5 +1,6 @@
 plugins {
     id "com.jfrog.bintray" version "1.7.3"
+    id 'net.researchgate.release' version '2.4.0'
 }
 
 apply plugin: 'java'
@@ -11,8 +12,9 @@ repositories {
 }
 
 ext {
-    bytemanJunitRulesVersion = '1.0.1'
+    bytemanJunitRulesVersion = '1.0.2'
     bytemanVersion = '3.0.6'
+    mockitoVersion = '1.9.5'
     scmUrl = 'https://github.com/mahnkong/sslkeylogger-byteman-helper'
     projectDescription = 'This project contains a Byteman helper class and a rule providing functionality to log SSL connection keys in a format used by wireshark to decrypt SSL Traffic.'
 }
@@ -23,9 +25,11 @@ configurations {
 
 dependencies {
     compile "org.jboss.byteman:byteman:${bytemanVersion}"
+    compile 'org.slf4j:slf4j-simple:1.7.21'
     testCompile "com.github.mahnkong:byteman-junit-rules:${bytemanJunitRulesVersion}"
     byteman "org.jboss.byteman:byteman-download:${bytemanVersion}:bin@zip"
     testCompile 'junit:junit:4.12'
+    testCompile "org.mockito:mockito-all:${mockitoVersion}"
 }
 
 task prepareByteman(type: Copy) {
@@ -41,6 +45,14 @@ test {
 
 jar {
     from "LICENSE"
+}
+
+release {
+    tagTemplate = 'v${version}'
+
+    git {
+        requireBranch = /master|release.*/
+    }
 }
 
 task sourcesJar(type: Jar, dependsOn: classes) {

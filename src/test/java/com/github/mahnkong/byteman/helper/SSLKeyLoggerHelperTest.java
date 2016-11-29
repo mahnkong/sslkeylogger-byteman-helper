@@ -3,6 +3,9 @@ package com.github.mahnkong.byteman.helper;
 import com.github.mahnkong.testutils.byteman.BytemanAgentInstaller;
 import com.github.mahnkong.testutils.byteman.BytemanRuleFile;
 import com.github.mahnkong.testutils.byteman.BytemanRuleSubmitter;
+import org.jboss.byteman.rule.exception.CompileException;
+import org.jboss.byteman.rule.exception.ParseException;
+import org.jboss.byteman.rule.exception.TypeException;
 import org.junit.*;
 import org.junit.rules.ExpectedException;
 
@@ -29,7 +32,7 @@ public class SSLKeyLoggerHelperTest {
     }
 
     private SSLKeyLoggerHelper sslKeyLoggerHelper;
-    private final ByteArrayOutputStream outContent = new ByteArrayOutputStream();
+    private ByteArrayOutputStream outContent;
     private final File sslkey_testlog = new File(System.getProperty("java.io.tmpdir") + File.separator + "sslkeys_test.log");
 
     @Rule
@@ -41,16 +44,19 @@ public class SSLKeyLoggerHelperTest {
     @Rule
     public BytemanRuleSubmitter bytemanRuleSubmitter = new BytemanRuleSubmitter.Builder().build();
 
+    private PrintStream oldSysOut = System.out;
+
     @Before
-    public void setup() {
+    public void setup() throws ParseException, TypeException, CompileException {
         sslKeyLoggerHelper = new SSLKeyLoggerHelper(null);
+        outContent = new ByteArrayOutputStream();
         System.setOut(new PrintStream(outContent));
         sslkey_testlog.delete();
     }
 
     @After
     public void cleanUpStreams() {
-        System.setOut(null);
+        System.setOut(oldSysOut);
     }
 
     @Test
